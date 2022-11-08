@@ -36,8 +36,8 @@ async function run() {
         app.get('/services/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id : ObjectId(id)}
-            const selectedCourses = await servicesCollection.findOne(query)
-            res.send(selectedCourses)
+            const selectedCollection = await servicesCollection.findOne(query)
+            res.send(selectedCollection)
         })
 
         // comments api
@@ -53,6 +53,15 @@ async function run() {
             const comments = await cursor.toArray()
             res.send(comments)
         })
+
+        app.get('/comments/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { service : id }
+            const cursor = commentsCollection.find(query)
+            const selectedComments = await cursor.toArray()
+            res.send(selectedComments)
+        })
+
         
 
     } 
