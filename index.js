@@ -17,6 +17,7 @@ async function run() {
     try {
 
         const servicesCollection = client.db('architect').collection('services')
+        const commentsCollection = client.db('architect').collection('comments')
 
         app.get('/services3', async (req, res) => {
             const query = {}
@@ -37,6 +38,20 @@ async function run() {
             const query = { _id : ObjectId(id)}
             const selectedCourses = await servicesCollection.findOne(query)
             res.send(selectedCourses)
+        })
+
+        // comments api
+        app.post('/comments', async (req, res) => {
+            const comment = req.body;
+            const result = await commentsCollection.insertOne(comment)
+            res.send(result)
+        })
+
+        app.get('/comments', async (req, res) => {
+            const query = {}
+            const cursor = commentsCollection.find(query)
+            const comments = await cursor.toArray()
+            res.send(comments)
         })
         
 
