@@ -2,7 +2,8 @@ const express = require('express');
 const cors = require('cors')
 const app = express();
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
-const colors = require('colors')
+const colors = require('colors');
+const { query } = require('express');
 const port = process.env.PORT || 5000;
 
 require('dotenv').config()
@@ -41,7 +42,7 @@ async function run() {
 
         app.get('/services/:id', async (req, res) => {
             const id = req.params.id;
-            const query = { _id : ObjectId(id)}
+            const query = { _id: ObjectId(id) }
             const selectedCollection = await servicesCollection.findOne(query)
             res.send(selectedCollection)
         })
@@ -62,17 +63,56 @@ async function run() {
 
         app.get('/comments/:id', async (req, res) => {
             const id = req.params.id;
-            const query = { service : id }
+            const query = { service: id }
             const cursor = commentsCollection.find(query)
             const selectedComments = await cursor.toArray()
             res.send(selectedComments)
         })
 
-        
 
-    } 
+        // app.get('/comments/:email', async (req, res) => {
+        //     const id = req.params.email;
+        //     console.log(id)
+        //     const query = { }
+        //     const cursor = commentsCollection.find(query)
+        //     const selectedComments = await cursor.toArray()
+        //     res.send(selectedComments)
+        // })
+
+
+
+
+        // my reviews
+        app.get('/reviewsbyuser', async (req, res) => {
+            // const id = req.params.email;
+            // console.log(req.query.email)
+            let query = {}
+            if(req.query.email){
+                query = {
+                    email : req.query.email
+                }
+            }
+            const cursor = commentsCollection.find(query) 
+            const reviews = await cursor.toArray()
+            res.send(reviews)
+            // console.log(reviews)
+        })
+
+        // app.get('/comments', async (req, res) => {
+        //     const uName = req.query.displayName;
+        //     console.log(uName)
+        //     const query = {}
+        //     const cursor = commentsCollection.find(query)
+        //     const comments = await cursor.toArray()
+        //     res.send(comments)
+        // })
+
+
+
+
+    }
     finally {
-        
+
     }
 }
 
