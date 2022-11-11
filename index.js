@@ -84,8 +84,6 @@ async function run() {
 
         // my reviews
         app.get('/reviewsbyuser', async (req, res) => {
-            // const id = req.params.email;
-            // console.log(req.query.email)
             let query = {}
             if(req.query.email){
                 query = {
@@ -95,8 +93,27 @@ async function run() {
             const cursor = commentsCollection.find(query) 
             const reviews = await cursor.toArray()
             res.send(reviews)
-            // console.log(reviews)
         })
+
+        app.delete('/reviewsbyuser/:id', async(req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) }
+            const result = await commentsCollection.deleteOne(query)
+            res.send(result)
+        })
+
+        app.patch('//reviewsbyuser/:id'), async(req, res) => {
+            const id = req.params.id;
+            const newData = req.body.newData
+            const query = { _id: ObjectId(id) }
+            const updatedDoc = {
+                $set:{
+                    data: newData
+                }
+            }
+            const result = await commentsCollection.updateOne(query, updatedDoc);
+            res.send(result)
+        }
 
         // app.get('/comments', async (req, res) => {
         //     const uName = req.query.displayName;
