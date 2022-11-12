@@ -102,18 +102,43 @@ async function run() {
             res.send(result)
         })
 
-        app.patch('//reviewsbyuser/:id'), async(req, res) => {
-            const id = req.params.id;
-            const newData = req.body.newData
+        app.get('/update/:id', async(req, res) => {
+            const id= req.params.id;
+            console.log(id)
             const query = { _id: ObjectId(id) }
-            const updatedDoc = {
-                $set:{
-                    data: newData
+            const review = await commentsCollection.findOne(query)
+            res.send(review)
+        })
+
+        app.put('/update/:id', async(req, res) => {
+            const id = req.params.id;
+            const filter = { _id : ObjectId(id)}
+            const updated = req.body;
+            console.log(updated)
+            const option = { upsert : true}
+
+            const updatedReview = {
+                $set: {
+                    comment: updated.review
                 }
             }
-            const result = await commentsCollection.updateOne(query, updatedDoc);
+            const result = await commentsCollection.updateOne(filter, updatedReview, option )
             res.send(result)
-        }
+        })
+
+        // app.patch('/reviewsbyuser/:id'), async(req, res) => {
+        //     const id = req.params.id;
+        //     console.log(id)
+        //     const newData = req.body.newData
+        //     const query = { _id: ObjectId(id) }
+        //     const updatedDoc = {
+        //         $set:{
+        //             data: newData
+        //         }
+        //     }
+        //     const result = await commentsCollection.updateOne(query, updatedDoc);
+        //     res.send(result)
+        // }
 
         // app.get('/comments', async (req, res) => {
         //     const uName = req.query.displayName;
